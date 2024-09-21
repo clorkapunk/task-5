@@ -21,7 +21,7 @@ app.use(express.json())
 // Маршрут для получения данных
 app.get('/data', (req, res) => {
     const {r, s, e, page, limit} = req.query
-    console.log(r ,s ,e ,page , limit)
+    // console.log(r ,s ,e ,page , limit)
     const faker = fakers[r]
 
     if(Number.isNaN(Number(page)) || Number.isNaN(Number(s)) || Number.isNaN(Number(e)))

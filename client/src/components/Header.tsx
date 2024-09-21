@@ -2,7 +2,7 @@ import {Col, Container, Row, Form, Button} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faShuffle} from "@fortawesome/free-solid-svg-icons";
 import {Options} from "../App.tsx";
-import {ChangeEvent, ChangeEventHandler} from "react";
+import {ChangeEventHandler} from "react";
 import {FormControlProps} from "react-bootstrap/FormControl";
 
 

@@ -37,11 +37,11 @@ function App() {
         seed: 1
     })
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState<number>(20)
+    const [limit] = useState<number>(20)
     const [data, setData] = useState<Data[]>([])
     const elementRef = useRef(null);
 
-    const onIntersection: IntersectionObserverCallback = function (entries) {
+    const onIntersection: IntersectionObserverCallback = function () {
 
         // const firstEntry = entries[0]
         // if(firstEntry.isIntersecting){
