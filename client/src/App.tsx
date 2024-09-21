@@ -1,7 +1,7 @@
-import Header from "./components/Header.tsx";
+import Header from "./components/Header";
 import {Container, Table} from "react-bootstrap";
 import {ChangeEventHandler, useEffect, useRef, useState} from "react";
-const REACT_APP_API_URL=import.meta.env.VITE_API_URL;
+const REACT_APP_API_URL = import.meta.env.VITE_API_URL;
 import axios from "axios";
 import {FormControlProps} from "react-bootstrap/FormControl";
 
