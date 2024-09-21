@@ -4,7 +4,7 @@
     "dev-client": "cd client && npm run dev",
     "build-server": "cd server && node app.js",
     "build": "node server.js",
-    "install": "npm install && cd client && npm install"
+    "installDeps": "npm install && cd client && npm install"
   },
   "dependencies": {
     "@faker-js/faker": "^9.0.1",
