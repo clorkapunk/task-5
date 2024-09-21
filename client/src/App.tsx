@@ -9,7 +9,6 @@ export type Options = {
     region: string;
     errors: number;
     seed: number;
-    page: number;
 }
 
 type Data = {
@@ -31,19 +30,18 @@ const columnsName: ColumnName = {
 }
 
 
-
 function App() {
     const [options, setOptions] = useState<Options>({
         region: 'us',
         errors: 1,
-        seed: 1,
-        page: 1
+        seed: 1
     })
+    const [page, setPage] = useState(1);
     const [limit, setLimit] = useState<number>(20)
     const [data, setData] = useState<Data[]>([])
     const elementRef = useRef(null);
 
-    const onIntersection: IntersectionObserverCallback = function (entries){
+    const onIntersection: IntersectionObserverCallback = function (entries) {
 
         // const firstEntry = entries[0]
         // if(firstEntry.isIntersecting){
@@ -51,20 +49,8 @@ function App() {
         // }
     }
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(onIntersection)
-        if(observer && elementRef.current){
-            observer.observe(elementRef.current);
-        }
 
-        return () => {
-            if(observer) observer.disconnect();
-        }
-    }, []);
-
-
-
-    const onFormChange: FormControlProps['onChange'] = function (e){
+    const onFormChange: FormControlProps['onChange'] = function (e) {
         const {name, value} = e.target
         let newValue = value
 
@@ -75,8 +61,7 @@ function App() {
                 (Number(newValue) < 0) ? '0' : newValue
         }
 
-        if(name === 'seed')
-        {
+        if (name === 'seed') {
             newValue = Number(newValue) > 999999999 ?
                 '999999999'
                 :
@@ -89,7 +74,7 @@ function App() {
         }))
     }
 
-    const onSelectChange: ChangeEventHandler<HTMLSelectElement> = function (e){
+    const onSelectChange: ChangeEventHandler<HTMLSelectElement> = function (e) {
         const {name, value} = e.target
 
         setOptions(prevState => ({
@@ -98,14 +83,33 @@ function App() {
         }))
     }
 
+    useEffect(() => {
+        const observer = new IntersectionObserver(onIntersection)
+        if (observer && elementRef.current) {
+            observer.observe(elementRef.current);
+        }
+
+        return () => {
+            if (observer) observer.disconnect();
+        }
+    }, []);
 
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${options.page}&limit=${limit}`)
+        axios.get(`http://localhost:3000/data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=1&limit=20`)
             .then(r => {
-                setData(r.data)
+                setData(r.data.data)
+                setPage(r.data.page)
             })
     }, [options]);
+
+    useEffect(() => {
+        axios.get(`http://localhost:3000/data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}&limit=${limit}`)
+            .then(r => {
+                setData(r.data.data)
+                setPage(r.data.page)
+            })
+    }, [limit, page])
 
 
     return (
