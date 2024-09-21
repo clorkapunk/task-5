@@ -1,8 +1,8 @@
 const {fakerEN, fakerRU, fakerPL} = require("@faker-js/faker");
-
+require('dotenv').config()
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const cors = require('cors')
 // Функция для генерации случайных данных
 function generateRandomData() {

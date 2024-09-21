@@ -1,7 +1,7 @@
 import Header from "./components/Header.tsx";
 import {Container, Table} from "react-bootstrap";
 import {ChangeEventHandler, useEffect, useRef, useState} from "react";
-
+const REACT_APP_API_URL=import.meta.env.VITE_API_URL;
 import axios from "axios";
 import {FormControlProps} from "react-bootstrap/FormControl";
 
@@ -96,7 +96,7 @@ function App() {
 
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=1&limit=20`)
+        axios.get(`${REACT_APP_API_URL}data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=1&limit=20`)
             .then(r => {
                 setData(r.data.data)
                 setPage(r.data.page)
@@ -104,7 +104,7 @@ function App() {
     }, [options]);
 
     useEffect(() => {
-        axios.get(`http://localhost:3000/data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}&limit=${limit}`)
+        axios.get(`${REACT_APP_API_URL}data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}&limit=${limit}`)
             .then(r => {
                 setData(r.data.data)
                 setPage(r.data.page)
