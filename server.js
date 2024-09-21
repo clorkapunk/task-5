@@ -1,13 +1,17 @@
 const {fakerEN, fakerRU, fakerPL} = require("@faker-js/faker");
-require('dotenv').config({ path: '../.env' })
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000;
+const express = require('express')
+const path = require('path')
 const cors = require('cors')
-// Функция для генерации случайных данных
-function generateRandomData() {
-    return Array.from({ length: 10 }, () => Math.random());
-}
+const dotenv = require('dotenv')
+dotenv.config()
+
+
+const app = express()
+const port = process.env.PORT || 3000
+
+
+const buildPath = path.join(__dirname, 'client/dist')
+
 
 const fakers = {
     us: fakerEN,
@@ -15,10 +19,11 @@ const fakers = {
     ru: fakerRU
 }
 
-
-app.use(cors())
+app.use(express.static(buildPath))
 app.use(express.json())
-// Маршрут для получения данных
+app.use(cors())
+
+
 app.get('/data', (req, res) => {
     const {r, s, e, page, limit} = req.query
     // console.log(r ,s ,e ,page , limit)
@@ -26,9 +31,8 @@ app.get('/data', (req, res) => {
 
     if(Number.isNaN(Number(page)) || Number.isNaN(Number(s)) || Number.isNaN(Number(e)))
     {
-        res.status(400).json({message: "You idiot"})
+        return res.status(400).json({message: "You idiot"})
     }
-
     faker.seed(Number(s + page))
     const data = []
     for (let i = 0; i < 20; i++) {
@@ -43,6 +47,11 @@ app.get('/data', (req, res) => {
     res.json({data, page: page});
 });
 
+app.get('*', (req, res) => {
+    console.log(buildPath)
+    res.sendFile('index.html', {root: buildPath})
+})
+
 app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-});
+    console.log(`Server is online on port: ${port}`)
+})

@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import {Container, Table} from "react-bootstrap";
 import {ChangeEventHandler, useEffect, useRef, useState} from "react";
+
 const REACT_APP_API_URL = import.meta.env.VITE_API_URL;
 import axios from "axios";
 import {FormControlProps} from "react-bootstrap/FormControl";
@@ -101,6 +102,9 @@ function App() {
                 setData(r.data.data)
                 setPage(r.data.page)
             })
+            .catch(e => {
+                console.log(e)
+            })
     }, [options]);
 
     useEffect(() => {
@@ -108,6 +112,9 @@ function App() {
             .then(r => {
                 setData(r.data.data)
                 setPage(r.data.page)
+            })
+            .catch(e => {
+                console.log(e)
             })
     }, [limit, page])
 
