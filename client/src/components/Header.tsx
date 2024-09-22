@@ -33,7 +33,6 @@ function Header({onFormChange, onSelectChange, options, isInfinite, onSeedRandom
                                 value={options.region}
                                 onChange={onSelectChange}
                             >
-                                <option>Open</option>
                                 <option value="us">USA</option>
                                 <option value="pl">Poland</option>
                                 <option value="ru">Russia</option>
@@ -55,7 +54,7 @@ function Header({onFormChange, onSelectChange, options, isInfinite, onSeedRandom
                                 />
                                 <Form.Control
                                     onKeyDown={(e) => {
-                                        e.preventDefault()
+                                        if(e.code === "Enter") e.preventDefault()
                                     }}
                                     className={'border-dark'}
                                     type='number'
@@ -75,7 +74,7 @@ function Header({onFormChange, onSelectChange, options, isInfinite, onSeedRandom
                             <div className={"d-flex align-items-center gap-2 w-100"}>
                                 <Form.Control
                                     onKeyDown={(e) => {
-                                        e.preventDefault()
+                                        if(e.code === "Enter") e.preventDefault()
                                     }}
                                     className={'border-dark'}
                                     type='number'

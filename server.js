@@ -35,11 +35,8 @@ function generatePage(faker, page, errorsRate, r, seed){
         for (let j = 0; j < 2; j++) {
             Math.random = seedrandom((seed + page) * i * j)
             let result = Math.random() > 0.7
-            console.log(result)
             addressArr.push(result)
         }
-
-        console.log(`${i}) ${addressArr[0]} ${addressArr[1]}`)
 
         const address = []
         if(addressArr[0]) address.push(faker.location.state())

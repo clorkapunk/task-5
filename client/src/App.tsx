@@ -46,7 +46,7 @@ function App() {
     const [options, setOptions] = useState<Options>({
         region: 'us',
         errors: 0,
-        seed: 1
+        seed: 0
     })
 
     const [page, setPage] = useState<number>(checkPageQueryParameter)
@@ -69,6 +69,7 @@ function App() {
 
         const {name, value} = e.target
         let newValue = value
+        console.log(name, value)
 
         if (name === 'errors') {
             newValue = Number(newValue) > errorMax ?
