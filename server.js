@@ -8,7 +8,7 @@ const {introduceErrors} = require('./errors')
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
 const {writeFileSync, unlinkSync} = require("node:fs");
-
+const seedrandom = require("seedrandom");
 
 const app = express()
 const port = process.env.PORT || 3000
@@ -30,11 +30,29 @@ app.use(cors())
 function generatePage(faker, page, errorsRate, r, seed){
     let data = []
     for (let i = 1; i <= 20; i++) {
+        let addressArr = []
+
+        for (let j = 0; j < 2; j++) {
+            Math.random = seedrandom((seed + page) * i * j)
+            let result = Math.random() > 0.7
+            console.log(result)
+            addressArr.push(result)
+        }
+
+        console.log(`${i}) ${addressArr[0]} ${addressArr[1]}`)
+
+        const address = []
+        if(addressArr[0]) address.push(faker.location.state())
+        if(addressArr[1]) address.push(faker.location.city())
+        address.push(faker.location.streetAddress({ useFullAddress: true}))
+
+        console.log(address.length)
+
         let temp = {
             index: (Number(page) - 1) * 20 + i,
             id: faker.string.uuid(),
             fullName: faker.person.fullName(),
-            address: [faker.location.city(), faker.location.streetAddress({useFullAddress: true})].join(', '),
+            address: address.join(', '),
             phoneNumber: faker.phone.number()
         }
 
