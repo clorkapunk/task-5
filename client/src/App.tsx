@@ -1,5 +1,5 @@
 import Header from "./components/Header";
-import {Container, Table} from "react-bootstrap";
+import {Container, Spinner, Table} from "react-bootstrap";
 import {ChangeEventHandler, useEffect, useRef, useState} from "react";
 const REACT_APP_API_URL = import.meta.env.VITE_API_URL;
 import axios from "axios";
@@ -35,9 +35,6 @@ const columnsName: ColumnName = {
     ru: ['#', "ID", "Full Name", "Address", "Phone number"],
 }
 
-
-
-
 function App() {
     const [searchParams, setSearchParams] = useSearchParams();
     const checkPageQueryParameter = (): number => {
@@ -61,7 +58,6 @@ function App() {
     const [isExporting, setIsExporting] = useState<boolean>(false)
     const firstUpdate = useRef(true);
 
-
     const onIntersection: IntersectionObserverCallback = function (entries) {
         const firstEntry = entries[0]
         if (firstEntry.isIntersecting) {
@@ -70,6 +66,7 @@ function App() {
     }
 
     const onFormChange: FormControlProps['onChange'] = function (e) {
+
         const {name, value} = e.target
         let newValue = value
 
@@ -123,10 +120,16 @@ function App() {
 
     const onExport = () => {
         if(!isExporting){
-            const fileName = `data-reg:${options.region}-err:${options.errors}-seed:${options.seed}-pages:${maxPages}.csv`
+            let url = `${REACT_APP_API_URL}download-page?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}`
+            let fileName = `data-reg:${options.region}-err:${options.errors}-seed:${options.seed}-page:${page}.csv`
+            if(isInfinite){
+                url = `${REACT_APP_API_URL}download-all?r=${options.region}&s=${options.seed}&e=${options.errors}&max=${maxPages}`
+                fileName = `data-reg:${options.region}-err:${options.errors}-seed:${options.seed}-pages:${maxPages}.csv`
+            }
+
             setIsExporting(true)
             axios({
-                url: `${REACT_APP_API_URL}download-csv?r=${options.region}&s=${options.seed}&e=${options.errors}&max=${maxPages}`, // Замените на нужный URL
+                url: url,
                 method: 'GET',
                 responseType: 'blob'
             })
@@ -167,7 +170,8 @@ function App() {
     function loadPage(page: number, isInfinite: boolean) {
         setIsFetching(true)
         if (!isFetching) {
-            axios.get(`${REACT_APP_API_URL}data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}`)
+            setSearchParams({page: page.toString()})
+            axios.get(`${REACT_APP_API_URL}page?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}`)
                 .then(r => {
                     if (isInfinite) {
                         setData(prevState => ([...prevState, ...r.data.data]))
@@ -202,7 +206,7 @@ function App() {
             setSearchParams({page: page.toString()})
             setIsFetching(true)
             if (!isFetching) {
-                axios.get(`${REACT_APP_API_URL}data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}`)
+                axios.get(`${REACT_APP_API_URL}page?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}`)
                     .then(r => {
                         setData(r.data.data)
                         setPage(r.data.page)
@@ -216,14 +220,12 @@ function App() {
             }
         }
         else {
-            console.log(`after: ${options.seed}, ${options.errors}`)
             setSearchParams({page: "1"})
             setIsFetching(true)
             if (!isFetching) {
 
-                axios.get(`${REACT_APP_API_URL}data?r=${options.region}&s=${options.seed}&e=${options.errors}&page=1`)
+                axios.get(`${REACT_APP_API_URL}page?r=${options.region}&s=${options.seed}&e=${options.errors}&page=1`)
                     .then(r => {
-                        console.log(`length of data to seed ${options.seed} and errors ${options.errors}: ${r.data.data.length}.  ${isInfinite}`)
                         setData(r.data.data)
                         setPage(1)
                         setMaxPages(1)
@@ -247,30 +249,39 @@ function App() {
                 isInfinite={isInfinite}
                 onSeedRandom={onSeedRandom}
                 onExport={onExport}
+                isExporting={isExporting}
             />
-            <Container>
-                <Table responsive striped bordered hover>
-                    <thead>
-                    {
-                        columnsName[options.region].map(i =>
-                            <th key={i}>{i}</th>
-                        )
-                    }
-                    </thead>
-                    <tbody>
-                    {
-                        data.map((i, index) =>
-                            <tr key={index}>
-                                <td>{i.index}</td>
-                                <td>{i.id}</td>
-                                <td>{i.fullName}</td>
-                                <td>{i.address}</td>
-                                <td>{i.phoneNumber}</td>
-                            </tr>
-                        )
-                    }
-                    </tbody>
-                </Table>
+
+            <Container fluid>
+                {
+                    isFetching ?
+                        <div className={'w-100 d-flex align-items-center justify-content-center py-5'}>
+                            <Spinner/>
+                        </div>
+                        :
+                        <Table responsive striped bordered hover>
+                            <thead>
+                            {
+                                columnsName[options.region].map(i =>
+                                    <th key={i}>{i}</th>
+                                )
+                            }
+                            </thead>
+                            <tbody>
+                            {
+                                data.map((i, index) =>
+                                    <tr key={index}>
+                                        <td>{i.index}</td>
+                                        <td>{i.id}</td>
+                                        <td>{i.fullName}</td>
+                                        <td>{i.address}</td>
+                                        <td>{i.phoneNumber}</td>
+                                    </tr>
+                                )
+                            }
+                            </tbody>
+                        </Table>
+                }
                 {
                     !isInfinite &&
                     <Paginator currentPage={page} maxPages={maxPages} onLoad={(e) => loadPage(e, isInfinite)}/>

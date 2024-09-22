@@ -50,7 +50,7 @@ function generatePage(faker, page, errorsRate, r, seed){
 }
 
 
-app.get('/data', (req, res) => {
+app.get('/page', (req, res) => {
     const {r, s, e, page} = req.query
 
     const faker = fakers[r]
@@ -108,7 +108,7 @@ app.get('/all', (req, res) => {
     res.json({data, page: Number(max)});
 });
 
-app.get('/download-csv', (req, res) => {
+app.get('/download-all', (req, res) => {
     const {r, s, e, max} = req.query
 
     const faker = fakers[r]
@@ -128,7 +128,41 @@ app.get('/download-csv', (req, res) => {
         data.push(...dataPage)
     }
 
-    const csvFromArrayOfObjects = convertArrayToCSV(data);
+    const csvFromArrayOfObjects = convertArrayToCSV(data, {separator: ";"});
+
+    // Создаем временный файл
+    const tempFilePath = 'temp.csv';
+    writeFileSync(tempFilePath, csvFromArrayOfObjects);
+
+    // Отправляем файл пользователю
+    res.download(tempFilePath, 'my_data.csv', (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Ошибка при скачивании файла');
+        } else {
+            // Удаляем временный файл после отправки
+            unlinkSync(tempFilePath);
+        }
+    });
+});
+
+app.get('/download-page', (req, res) => {
+    const {r, s, e, page} = req.query
+
+    const faker = fakers[r]
+
+    if(Number.isNaN(Number(page)) || Number.isNaN(Number(s)) || Number.isNaN(Number(e)))
+    {
+        return res.status(400).json({message: "You idiot"})
+    }
+
+    const seed = Number(s + page)
+    const errorsRate = Number(e)
+
+    faker.seed(seed)
+    const data = generatePage(faker, page, errorsRate, r, seed)
+
+    const csvFromArrayOfObjects = convertArrayToCSV(data, {separator: ";"});
 
     // Создаем временный файл
     const tempFilePath = 'temp.csv';

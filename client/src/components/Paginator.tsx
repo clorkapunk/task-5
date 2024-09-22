@@ -1,4 +1,5 @@
 import {Pagination} from "react-bootstrap";
+import {CSSProperties} from "react";
 
 
 function getPageRange(maxPage: number, currentPage: number): number[] {
@@ -26,6 +27,10 @@ function getPageRange(maxPage: number, currentPage: number): number[] {
     return  Array.from({ length: length }, (_, i) => i + 1 +  start);
 }
 
+const pageItemStyle: CSSProperties = {
+
+}
+
 function Paginator({currentPage, maxPages, onLoad}: {currentPage: number, maxPages: number, onLoad: (page: number) => void}) {
 
 
@@ -33,6 +38,7 @@ function Paginator({currentPage, maxPages, onLoad}: {currentPage: number, maxPag
         <div className={'d-flex align-items-center justify-content-center'}>
             <Pagination className={'mt-3'}>
                 <Pagination.Prev
+                    linkStyle={pageItemStyle}
                     onClick={() => {
                         if (currentPage - 1 <= 1) onLoad(1)
                         else onLoad(currentPage - 1)
@@ -40,6 +46,7 @@ function Paginator({currentPage, maxPages, onLoad}: {currentPage: number, maxPag
 
                 />
                 <Pagination.Item
+                    linkStyle={pageItemStyle}
                     active={1 === currentPage}
                     onClick={() => {
                         onLoad(1)
@@ -48,13 +55,14 @@ function Paginator({currentPage, maxPages, onLoad}: {currentPage: number, maxPag
 
                 {
                     (maxPages > 7 && currentPage - 1 > 3) &&
-                    <Pagination.Ellipsis/>
+                    <Pagination.Ellipsis  linkStyle={pageItemStyle}/>
                 }
 
                 {
                     getPageRange(maxPages, currentPage)
                         .map(i =>
                             <Pagination.Item
+                                linkStyle={pageItemStyle}
                                 key={i}
                                 active={i === currentPage}
                                 onClick={() => {
@@ -66,11 +74,12 @@ function Paginator({currentPage, maxPages, onLoad}: {currentPage: number, maxPag
 
                 {
                     (maxPages > 7 && maxPages - currentPage > 3) &&
-                    <Pagination.Ellipsis/>
+                    <Pagination.Ellipsis  linkStyle={pageItemStyle}/>
                 }
                 {
                     maxPages > 1 &&
                     <Pagination.Item
+                        linkStyle={pageItemStyle}
                         active={maxPages === currentPage}
                         onClick={() => {
                             onLoad(maxPages)
@@ -78,6 +87,7 @@ function Paginator({currentPage, maxPages, onLoad}: {currentPage: number, maxPag
                     >{maxPages}</Pagination.Item>
                 }
                 <Pagination.Next
+                    linkStyle={pageItemStyle}
                     onClick={() => {
                         // if (currentPage + 1 >= maxPages) onLoad(maxPages + 1)
                         // else
@@ -88,5 +98,7 @@ function Paginator({currentPage, maxPages, onLoad}: {currentPage: number, maxPag
         </div>
     );
 }
+
+
 
 export default Paginator;

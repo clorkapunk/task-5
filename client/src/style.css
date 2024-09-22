@@ -1,0 +1,15 @@
+input[type="range"]::-webkit-slider-thumb {
+    background: #212529 !important;
+}
+
+
+
+.active>.page-link {
+    background-color: #212529 !important;
+    border-color: #212529 !important;
+    color: white !important;
+}
+
+.page-link {
+    color: #212529 !important;
+}

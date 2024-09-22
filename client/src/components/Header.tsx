@@ -1,36 +1,37 @@
-import {Col, Container, Row, Form, Button} from "react-bootstrap";
+import {Col, Container, Row, Form, Button, Spinner} from "react-bootstrap";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faShuffle} from "@fortawesome/free-solid-svg-icons";
+import {faFileExport, faShuffle} from "@fortawesome/free-solid-svg-icons";
 import {Options} from "../App.tsx";
 import {ChangeEventHandler} from "react";
 import {FormControlProps} from "react-bootstrap/FormControl";
 
 
 
-function Header({onFormChange, onSelectChange, options, isInfinite, onSeedRandom, onExport}:
+function Header({onFormChange, onSelectChange, options, isInfinite, onSeedRandom, onExport, isExporting}:
                     {
                         onFormChange: FormControlProps['onChange'],
                         onSelectChange: ChangeEventHandler<HTMLSelectElement>
                         options: Options,
                         isInfinite: boolean,
                         onSeedRandom: () => void,
-                        onExport: () => void
+                        onExport: () => void,
+                        isExporting: boolean
                     }) {
 
     return (
-        <div className={'bg-light py-3'}>
+        <div className={'bg-light pt-2 pb-4 border-bottom bg-body'}>
             <Container>
-                <Row>
-                    <Col>
-                        <Form className={'d-flex align-items-center gap-3'}>
-                            <Form.Label>
-                                Region:
+                <Row className={'d-flex justify-content-between'} style={{rowGap: 15}}>
+                    <Col sm={5} lg={2}>
+                        <Form className={'d-flex flex-column gap-0 align-items-center'}>
+                            <Form.Label style={{fontSize: 16, fontWeight: 'bold', color: '#212529'}}>
+                                Region
                             </Form.Label>
                             <Form.Select
                                 name={'region'}
+                                className={'w-full border-dark'}
                                 value={options.region}
                                 onChange={onSelectChange}
-                                style={{maxWidth: 150}}
                             >
                                 <option>Open</option>
                                 <option value="us">USA</option>
@@ -39,59 +40,91 @@ function Header({onFormChange, onSelectChange, options, isInfinite, onSeedRandom
                             </Form.Select>
                         </Form>
                     </Col>
-                    <Col>
-                        <Form className={'d-flex align-items-center gap-3'}>
-                            <Form.Label>
-                                Errors:
+                    <Col sm={5} lg={2} >
+                        <Form className={'d-flex flex-column gap-0 align-items-center'}>
+                            <Form.Label style={{fontSize: 16, fontWeight: 'bold', color: '#212529'}}>
+                                Errors
                             </Form.Label>
-                            <Form.Range
-                                value={options.errors}
-                                max={10}
-                                min={0}
-                                name={'errors'}
-                                onChange={onFormChange}
-                            />
-                            <Form.Control
-                                type='number'
-                                step="any"
-                                value={options.errors}
-                                name={'errors'}
-                                onChange={onFormChange}
-                            />
+                            <div className={"d-flex align-items-center gap-2 w-100"}>
+                                <Form.Range
+                                    value={options.errors}
+                                    max={10}
+                                    min={0}
+                                    name={'errors'}
+                                    onChange={onFormChange}
+                                />
+                                <Form.Control
+                                    onKeyDown={(e) => {
+                                        e.preventDefault()
+                                    }}
+                                    className={'border-dark'}
+                                    type='number'
+                                    step="any"
+                                    value={options.errors}
+                                    name={'errors'}
+                                    onChange={onFormChange}
+                                />
+                            </div>
                         </Form>
                     </Col>
-                    <Col>
-                        <Form className={'d-flex align-items-center gap-3'}>
-                            <Form.Label>
-                                Seed:
+                    <Col sm={5} lg={2}>
+                    <Form className={'d-flex flex-column gap-0 align-items-center'}>
+                            <Form.Label style={{fontSize: 16, fontWeight: 'bold', color: '#212529'}}>
+                                Seed
                             </Form.Label>
-                            <Form.Control
-                                type='number'
-                                value={options.seed}
-                                name={'seed'}
-                                onChange={onFormChange}
-                            />
-                            <Button onClick={() => onSeedRandom()}>
-                                <FontAwesomeIcon icon={faShuffle}/>
-                            </Button>
+                            <div className={"d-flex align-items-center gap-2 w-100"}>
+                                <Form.Control
+                                    onKeyDown={(e) => {
+                                        e.preventDefault()
+                                    }}
+                                    className={'border-dark'}
+                                    type='number'
+                                    value={options.seed}
+                                    name={'seed'}
+                                    onChange={onFormChange}
+                                />
+                                <Button onClick={() => onSeedRandom()} variant={"outline-dark"}>
+                                    <FontAwesomeIcon icon={faShuffle}/>
+                                </Button>
+                            </div>
+
                         </Form>
                     </Col>
-                    <Col>
-                        <Button onClick={() => onExport()}>
-                            Export
-                        </Button>
-                    </Col>
-                    <Col>
+                    <Col sm={5} lg={2} className={'d-flex flex-column gap-0 align-items-center'}>
+                        <Form.Label style={{fontSize: 16, fontWeight: 'bold', color: '#212529'}}>
+                            Scroll
+                        </Form.Label>
                         <Form.Select
                             name={'scroll'}
                             value={isInfinite ? 1 : 0}
-                            className={'w-auto'}
+                            className={'w-full border-dark'}
                             onChange={onSelectChange}
                         >
-                            <option value={0}>Pages</option>
+                            <option value={0}>Paged</option>
                             <option value={1}>Infinite</option>
                         </Form.Select>
                     </Col>
+                    <Col lg={2} className={'d-flex flex-column gap-0 align-items-center'}>
+                        <Form.Label style={{fontSize: 16, fontWeight: 'bold', color: '#212529'}}>
+                            Export CSV
+                        </Form.Label>
+                        <Button
+                            onClick={() => onExport()}
+                            variant={'outline-dark'}
+                            className={'d-flex align-items-center justify-content-center h-100'}
+                            disabled={isExporting}
+                        >
+                            {
+                                isExporting ?
+                                    <Spinner animation="border" size='sm' />
+                                    :
+                                    <div>
+                                        Export <FontAwesomeIcon icon={faFileExport}/>
+                                    </div>
+                            }
+                        </Button>
+                    </Col>
+
                 </Row>
             </Container>
         </div>
