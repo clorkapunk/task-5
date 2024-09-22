@@ -38,8 +38,8 @@ const columnsName: ColumnName = {
 function App() {
     const [searchParams, setSearchParams] = useSearchParams();
     const checkPageQueryParameter = (): number => {
-        if(!searchParams.get("page")) return 1
-        if(isNaN(Number(searchParams.get("page")))) return 1
+        if (!searchParams.get("page")) return 1
+        if (isNaN(Number(searchParams.get("page")))) return 1
         return Number(searchParams.get("page"))
     }
 
@@ -96,11 +96,10 @@ function App() {
 
         if (name === "scroll") {
             setIsInfinite(Number(value) === 1)
-            if(Number(value) === 0){
+            if (Number(value) === 0) {
                 setPage(1)
                 loadPage(1, false)
-            }
-            else {
+            } else {
                 loadPreviousPages(maxPages)
             }
         }
@@ -120,10 +119,10 @@ function App() {
     }
 
     const onExport = () => {
-        if(!isExporting){
+        if (!isExporting) {
             let url = `${REACT_APP_API_URL}download-page?r=${options.region}&s=${options.seed}&e=${options.errors}&page=${page}`
             let fileName = `data-reg:${options.region}-err:${options.errors}-seed:${options.seed}-page:${page}.csv`
-            if(isInfinite){
+            if (isInfinite) {
                 url = `${REACT_APP_API_URL}download-all?r=${options.region}&s=${options.seed}&e=${options.errors}&max=${maxPages}`
                 fileName = `data-reg:${options.region}-err:${options.errors}-seed:${options.seed}-pages:${maxPages}.csv`
             }
@@ -151,7 +150,7 @@ function App() {
         }
     }
 
-    function loadPreviousPages(maxPage: number){
+    function loadPreviousPages(maxPage: number) {
         setIsFetching(true)
         if (!isFetching) {
             axios.get(`${REACT_APP_API_URL}all?r=${options.region}&s=${options.seed}&e=${options.errors}&max=${maxPage}`)
@@ -219,8 +218,7 @@ function App() {
                         setIsFetching(false)
                     })
             }
-        }
-        else {
+        } else {
             setSearchParams({page: "1"})
             setIsFetching(true)
             if (!isFetching) {
@@ -255,34 +253,33 @@ function App() {
 
             <Container fluid>
                 {
-                    isFetching ?
-                        <div className={'w-100 d-flex align-items-center justify-content-center py-5'}>
-                            <Spinner/>
-                        </div>
-                        :
-                        <Table responsive striped bordered hover>
-                            <thead>
-                            {
-                                columnsName[options.region].map(i =>
-                                    <th key={i}>{i}</th>
-                                )
-                            }
-                            </thead>
-                            <tbody>
-                            {
-                                data.map((i, index) =>
-                                    <tr key={index}>
-                                        <td>{i.index}</td>
-                                        <td>{i.id}</td>
-                                        <td>{i.fullName}</td>
-                                        <td>{i.address}</td>
-                                        <td>{i.phoneNumber}</td>
-                                    </tr>
-                                )
-                            }
-                            </tbody>
-                        </Table>
+                    isFetching &&
+                    <div className={'w-100 d-flex align-items-center justify-content-center py-5'}>
+                        <Spinner/>
+                    </div>
                 }
+                <Table responsive striped bordered hover>
+                    <thead>
+                    {
+                        columnsName[options.region].map(i =>
+                            <th key={i}>{i}</th>
+                        )
+                    }
+                    </thead>
+                    <tbody>
+                    {
+                        data.map((i, index) =>
+                            <tr key={index}>
+                                <td>{i.index}</td>
+                                <td>{i.id}</td>
+                                <td>{i.fullName}</td>
+                                <td>{i.address}</td>
+                                <td>{i.phoneNumber}</td>
+                            </tr>
+                        )
+                    }
+                    </tbody>
+                </Table>
                 {
                     !isInfinite &&
                     <Paginator currentPage={page} maxPages={maxPages} onLoad={(e) => loadPage(e, isInfinite)}/>

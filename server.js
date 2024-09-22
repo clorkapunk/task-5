@@ -43,8 +43,6 @@ function generatePage(faker, page, errorsRate, r, seed){
         if(addressArr[1]) address.push(faker.location.city())
         address.push(faker.location.streetAddress({ useFullAddress: true}))
 
-        console.log(address.length)
-
         let temp = {
             index: (Number(page) - 1) * 20 + i,
             id: faker.string.uuid(),
@@ -63,7 +61,6 @@ function generatePage(faker, page, errorsRate, r, seed){
 
     return data
 }
-
 
 app.get('/page', (req, res) => {
     const {r, s, e, page} = req.query
