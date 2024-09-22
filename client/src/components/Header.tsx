@@ -6,11 +6,15 @@ import {ChangeEventHandler} from "react";
 import {FormControlProps} from "react-bootstrap/FormControl";
 
 
-function Header({onFormChange, onSelectChange, options}:
+
+function Header({onFormChange, onSelectChange, options, isInfinite, onSeedRandom, onExport}:
                     {
                         onFormChange: FormControlProps['onChange'],
                         onSelectChange: ChangeEventHandler<HTMLSelectElement>
-                        options: Options
+                        options: Options,
+                        isInfinite: boolean,
+                        onSeedRandom: () => void,
+                        onExport: () => void
                     }) {
 
     return (
@@ -67,15 +71,26 @@ function Header({onFormChange, onSelectChange, options}:
                                 name={'seed'}
                                 onChange={onFormChange}
                             />
-                            <Button>
+                            <Button onClick={() => onSeedRandom()}>
                                 <FontAwesomeIcon icon={faShuffle}/>
                             </Button>
                         </Form>
                     </Col>
                     <Col>
-                        <Button>
+                        <Button onClick={() => onExport()}>
                             Export
                         </Button>
+                    </Col>
+                    <Col>
+                        <Form.Select
+                            name={'scroll'}
+                            value={isInfinite ? 1 : 0}
+                            className={'w-auto'}
+                            onChange={onSelectChange}
+                        >
+                            <option value={0}>Pages</option>
+                            <option value={1}>Infinite</option>
+                        </Form.Select>
                     </Col>
                 </Row>
             </Container>
